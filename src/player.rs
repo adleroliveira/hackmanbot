@@ -1,4 +1,2 @@
 #[derive(Debug)]
-pub struct Player {
-
-}
+pub struct Player {}

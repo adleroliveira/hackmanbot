@@ -1,11 +1,11 @@
 #[derive(Debug)]
 pub enum Action {
-	Character,
-	Move
+    Character,
+    Move,
 }
 
 impl Action {
-	pub fn new() -> Action {
-		Action::Character
-	}
+    pub fn new() -> Action {
+        Action::Character
+    }
 }
