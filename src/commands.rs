@@ -23,8 +23,8 @@ impl InputCommand {
                 Ok(InputCommand::Update(update.unwrap()))
             }
             Some("action") => {
-                let action = Action::new();
-                Ok(InputCommand::Action(action))
+                let action = Action::new(parts.next(), parts.next());
+                Ok(InputCommand::Action(action.unwrap()))
             }
             _ => Err("Command not found"),
         }

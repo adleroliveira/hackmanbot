@@ -13,8 +13,8 @@ impl Update {
         value: Option<&str>,
     ) -> Result<Update, &'static str> {
 
-        let feature = feature.unwrap();
-        let value = value.unwrap();
+        let feature = feature.expect("Malformed update");
+        let value = value.expect("Malformed update");
 
         match entity {
             Some("game") => update_game(feature, value),
@@ -34,7 +34,7 @@ fn update_game(feature: &str, value: &str) -> Result<Update, &'static str> {
             let value = value.to_string();
             Ok(Update::GameField(value))
         }
-        _ => Err("Game feature update not recognizable"),
+        _ => Err("Unknown game feature update"),
     }
 }
 

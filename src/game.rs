@@ -14,7 +14,6 @@ const CHARACTER: &str = "bixie";
 enum GameStatus {
     New,
     Started,
-	// Stopped
 }
 
 #[derive(Debug)]
@@ -75,15 +74,15 @@ impl Game {
     fn parse_command(&mut self, cmd: &str) -> Result<(), &'static str> {
         let command = InputCommand::new(cmd).unwrap();
         match command {
-            InputCommand::Setting(val) => self.update_setting(val),
-            InputCommand::Update(val) => self.update_game_state(val),
+            InputCommand::Setting(val) => self.add_settings(val),
+            InputCommand::Update(val) => self.update_game(val),
             InputCommand::Action(val) => self.perform_action(val),
         }
         println!("{:#?}", self);
         Ok(())
     }
 
-    fn update_setting(&mut self, setting: Setting) {
+    fn add_settings(&mut self, setting: Setting) {
         match setting {
             Setting::Timebank(val) => self.timebank = Some(val),
             Setting::TimePerMove(val) => self.time_per_move = Some(val),
@@ -96,16 +95,23 @@ impl Game {
         }
     }
 
-    fn update_game_state(&mut self, update: Update) {
+    fn update_game(&mut self, update: Update) {
         match update {
-            Update::GameRound(val) => self.round = val,
-            Update::GameField(_) => (),
+            Update::GameRound(round) => self.round = round,
+            Update::GameField(state) => self.update_game_state(state),
             Update::PlayerSnippets(_) => (),
             Update::PlayerBombs(_) => (),
         }
     }
 
     fn perform_action(&mut self, action: Action) {
-        println!("action {:?}", action);
+        match action {
+            Action::Character(time) => println!("{}", self.character),
+            Action::Move(time) => println!("pass") // TODO: Implement bot logic here
+        }
+    }
+
+    fn update_game_state(&mut self, state: String) {
+        println!("{}", state);
     }
 }
