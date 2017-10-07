@@ -1,0 +1,6 @@
+[package]
+name = "hackmanbot"
+version = "0.1.0"
+authors = ["Adler Oliveira <aoliveira@jooycar.cl>"]
+
+[dependencies]
