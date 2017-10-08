@@ -2,8 +2,8 @@
 pub enum Update {
     GameRound(usize),
     GameField(String),
-    PlayerSnippets(usize),
-    PlayerBombs(usize),
+    PlayerSnippets((String, usize)),
+    PlayerBombs((String, usize)),
 }
 
 impl Update {
@@ -34,13 +34,20 @@ fn update_game(feature: &str, value: &str) -> Result<Update, &'static str> {
             let value = value.to_string();
             Ok(Update::GameField(value))
         }
-        _ => Err("Unknown game feature update"),
+        _ => Err("Unknown game feature"),
     }
 }
 
 fn update_player(player: &str, feature: &str, value: &str) -> Result<Update, &'static str> {
-    println!("{:?}", player);
-    println!("{:?}", feature);
-    println!("{:?}", value);
-    Err("Not implemented")
+    match feature {
+        "snippets" => {
+            let value = value.parse().expect("Snippets must be integer");
+            Ok(Update::PlayerSnippets((player.to_string(), value)))
+        }
+        "bombs" => {
+            let value = value.parse().expect("Snippets must be integer");
+            Ok(Update::PlayerSnippets((player.to_string(), value)))
+        }
+        _ => Err("Unknown player feature"),
+    }
 }

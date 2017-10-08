@@ -78,17 +78,30 @@ impl Game {
             InputCommand::Update(val) => self.update_game(val),
             InputCommand::Action(val) => self.perform_action(val),
         }
-        println!("{:#?}", self);
         Ok(())
     }
 
     fn add_settings(&mut self, setting: Setting) {
         match setting {
+
+            Setting::YourBot(name) => {
+                self.player = Some(Player::new(name.clone()));
+                self.your_bot = Some(name);
+            }
+
+            Setting::YourBotID(id) => {
+                if self.player.is_some() {
+                    let mut player = self.player.take().unwrap();
+                    player.set_id(id);
+                    self.player = Some(player);
+                }
+                
+                self.your_botid = Some(id);
+            }
+
             Setting::Timebank(val) => self.timebank = Some(val),
             Setting::TimePerMove(val) => self.time_per_move = Some(val),
             Setting::PlayerNames(val) => self.player_names = Some(val),
-            Setting::YourBot(val) => self.your_bot = Some(val),
-            Setting::YourBotID(val) => self.your_botid = Some(val),
             Setting::FieldWidth(val) => self.field_width = Some(val),
             Setting::FieldHeight(val) => self.field_height = Some(val),
             Setting::MaxRounds(val) => self.max_rounds = Some(val),
@@ -98,16 +111,54 @@ impl Game {
     fn update_game(&mut self, update: Update) {
         match update {
             Update::GameRound(round) => self.round = round,
-            Update::GameField(state) => self.update_game_state(state),
-            Update::PlayerSnippets(_) => (),
-            Update::PlayerBombs(_) => (),
+            
+            Update::GameField(state) => {
+                match self.status {
+                    GameStatus::Started => (),
+                    GameStatus::New => self.status = GameStatus::Started,
+                }
+
+                self.update_game_state(state)
+            }
+
+            Update::PlayerSnippets((player_name, snippets)) => {
+                if self.player.is_some() {
+                    let mut player = self.player.take().unwrap();
+
+                    if player.is(&player_name) {
+                        player.snippets = snippets;
+                    }
+
+                    // For now, let's ignore the enemies snippets
+
+                    self.player = Some(player);
+                }
+            }
+
+            Update::PlayerBombs((player_name, bombs)) => {
+                if self.player.is_some() {
+                    let mut player = self.player.take().unwrap();
+
+                    if player.is(&player_name) {
+                        player.bombs = bombs;
+                    }
+
+                    // For now, let's ignore the enemies bombs
+
+                    self.player = Some(player);
+                }
+            }
         }
     }
 
     fn perform_action(&mut self, action: Action) {
         match action {
-            Action::Character(time) => println!("{}", self.character),
-            Action::Move(time) => println!("pass") // TODO: Implement bot logic here
+            Action::Character(_) => println!("{}", self.character),
+            Action::Move(_) => {
+                // println!("{:#?}", self);
+                println!("pass")
+                // TODO: Implement bot logic here
+            } 
         }
     }
 
