@@ -3,6 +3,7 @@ use std::io::Stdin;
 use std::error::Error;
 
 use commands::InputCommand;
+use game_state::GameState;
 use settings::Setting;
 use updates::Update;
 use player::Player;
@@ -21,13 +22,14 @@ pub struct Game {
     stdin: Stdin,
     character: &'static str,
     status: GameStatus,
+    state: Option<GameState>,
     timebank: Option<usize>,
     time_per_move: Option<usize>,
     player_names: Option<String>,
     your_bot: Option<String>,
     your_botid: Option<usize>,
-    field_width: Option<usize>,
-    field_height: Option<usize>,
+    field_width: Option<i32>,
+    field_height: Option<i32>,
     max_rounds: Option<usize>,
     player: Option<Player>,
     enemy: Option<Player>,
@@ -40,6 +42,7 @@ impl Game {
             stdin,
             status: GameStatus::New,
             character: CHARACTER,
+            state: None,
             timebank: None,
             time_per_move: None,
             player_names: None,
@@ -111,7 +114,7 @@ impl Game {
     fn update_game(&mut self, update: Update) {
         match update {
             Update::GameRound(round) => self.round = round,
-            
+
             Update::GameField(state) => {
                 match self.status {
                     GameStatus::Started => (),
@@ -129,7 +132,7 @@ impl Game {
                         player.snippets = snippets;
                     }
 
-                    // For now, let's ignore the enemies snippets
+                    // For now, let's ignore enemies snippets
 
                     self.player = Some(player);
                 }
@@ -143,7 +146,7 @@ impl Game {
                         player.bombs = bombs;
                     }
 
-                    // For now, let's ignore the enemies bombs
+                    // For now, let's ignore enemies bombs
 
                     self.player = Some(player);
                 }
@@ -163,6 +166,19 @@ impl Game {
     }
 
     fn update_game_state(&mut self, state: String) {
-        println!("{}", state);
+
+        // For now, the game will replace the current state whenever
+        // a new state is provided. Idealy the game should always store
+        // previous states and perform a diff with the provided state
+        // So it will have context (like the direction of the entities).
+        //
+        // TODO: Implement state persistency and diff to store context
+
+        self.state = Some(GameState::new(
+            &state,
+            self.field_width.unwrap(),
+            self.field_height.unwrap()
+            )
+        );
     }
 }

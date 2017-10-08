@@ -19,7 +19,7 @@ impl Update {
         match entity {
             Some("game") => update_game(feature, value),
             Some(player) => update_player(player, feature, value),
-            None => Err("not implemented"),
+            None => Err("Unknown update"),
         }
     }
 }
@@ -27,7 +27,7 @@ impl Update {
 fn update_game(feature: &str, value: &str) -> Result<Update, &'static str> {
     match feature {
         "round" => {
-            let value = value.parse().expect("Timebank must be integer");
+            let value = value.parse().expect("Game round must be integer");
             Ok(Update::GameRound(value))
         }
         "field" => {
@@ -45,7 +45,7 @@ fn update_player(player: &str, feature: &str, value: &str) -> Result<Update, &'s
             Ok(Update::PlayerSnippets((player.to_string(), value)))
         }
         "bombs" => {
-            let value = value.parse().expect("Snippets must be integer");
+            let value = value.parse().expect("Bombs must be integer");
             Ok(Update::PlayerSnippets((player.to_string(), value)))
         }
         _ => Err("Unknown player feature"),

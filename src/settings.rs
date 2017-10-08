@@ -5,8 +5,8 @@ pub enum Setting {
     PlayerNames(String),
     YourBot(String),
     YourBotID(usize),
-    FieldWidth(usize),
-    FieldHeight(usize),
+    FieldWidth(i32),
+    FieldHeight(i32),
     MaxRounds(usize),
 }
 
