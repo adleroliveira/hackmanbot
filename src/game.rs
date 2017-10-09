@@ -8,6 +8,7 @@ use settings::Setting;
 use updates::Update;
 use player::Player;
 use action::Action;
+use strategies::Strategy;
 
 const CHARACTER: &str = "bixie";
 
@@ -23,6 +24,7 @@ pub struct Game {
     character: &'static str,
     status: GameStatus,
     state: Option<GameState>,
+    strategy: Strategy,
     timebank: Option<usize>,
     time_per_move: Option<usize>,
     player_names: Option<String>,
@@ -37,7 +39,7 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(stdin: io::Stdin) -> Game {
+    pub fn new(stdin: io::Stdin, strategy: Strategy) -> Game {
         Game {
             stdin,
             status: GameStatus::New,
@@ -54,6 +56,7 @@ impl Game {
             player: None,
             enemy: None,
             round: 0,
+            strategy,
         }
     }
 
@@ -158,9 +161,9 @@ impl Game {
         match action {
             Action::Character(_) => println!("{}", self.character),
             Action::Move(_) => {
-                // println!("{:#?}", self);
-                println!("pass")
-                // TODO: Implement bot logic here
+                // For now I'm just ignoring timebank management
+                // Todo: Use timebank information
+                self.strategy.run(self.state.clone())
             } 
         }
     }
@@ -177,8 +180,8 @@ impl Game {
         self.state = Some(GameState::new(
             &state,
             self.field_width.unwrap(),
-            self.field_height.unwrap()
-            )
+            self.field_height.unwrap(),
+            self.your_botid.unwrap())
         );
     }
 }

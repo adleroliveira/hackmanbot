@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Bug {
     Chase,
     Predict,
@@ -8,13 +8,13 @@ pub enum Bug {
 }
 
 impl Bug {
-    pub fn new(bug_type: &str) -> Bug {
+    pub fn new(bug_type: &str) -> Result<Bug, &'static str> {
         match bug_type {
-            "0" => Bug::Chase,
-            "1" => Bug::Predict,
-            "2" => Bug::Lever,
-            "3" => Bug::FarChase,
-            _ => Bug::Unknown,
+            "0" => Ok(Bug::Chase),
+            "1" => Ok(Bug::Predict),
+            "2" => Ok(Bug::Lever),
+            "3" => Ok(Bug::FarChase),
+            _ => Err("Unknown bug type"),
         }
     }
 }
